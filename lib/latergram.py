@@ -1,7 +1,8 @@
 from PIL import Image
 from lib.colorShift import ColorShift
+from lib.whiteBalance import WhiteBalance
 
-class Latergram(ColorShift):
+class Latergram(ColorShift, WhiteBalance):
     # latergram can be instantiated with a photo
     def __init__(self, photo = None):
         self.photo = photo
