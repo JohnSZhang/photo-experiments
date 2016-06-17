@@ -16,6 +16,10 @@ class Latergram(ColorShift, WhiteBalance):
     # sets the photo of current latergram
     def setPhoto(self, photo):
         self.photo = photo
+
+    # sets the current photo as well as the original photo
+    def resetPhoto(self, photo):
+        self.setPhoto(photo)
         self.originalPhoto = photo
 
     # returns the photo of current latergram
@@ -25,6 +29,8 @@ class Latergram(ColorShift, WhiteBalance):
 
     # resets photo to the original one
     def setOriginalPhoto(self):
+        if (not self.originalPhoto):
+            raise Exception('You do not have an original photo to reset to!')
         self.photo = self.originalPhoto
 
     # display current latergram photo to user
