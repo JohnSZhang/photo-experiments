@@ -1,8 +1,9 @@
 from PIL import Image
 from lib.colorShift import ColorShift
 from lib.whiteBalance import WhiteBalance
+from lib.saturation import Saturation
 
-class Latergram(ColorShift, WhiteBalance):
+class Latergram(ColorShift, WhiteBalance, Saturation):
     # latergram can be instantiated with a photo
     def __init__(self, photo = None):
         self.photo = photo
@@ -33,7 +34,24 @@ class Latergram(ColorShift, WhiteBalance):
             raise Exception('You do not have an original photo to reset to!')
         self.photo = self.originalPhoto
 
+    # get rgb bands of current photo
+    def currentBands(self):
+        return self.getPhoto().split()
+
+    # Update current photo as an image made up of the supplied rgb bands
+    def updatePhotoFromBands(self, mode, bands):
+        self.setPhoto(Image.merge(mode, bands))
+
     # display current latergram photo to user
     def show(self):
         self.ensurePhoto()
         self.photo.show()
+
+    # update mode of image
+    def ensureMode(self, mode):
+        if ['HSV'].count(mode) == 0:
+            raise Exception('Not a support image mode')
+        print(self.photo.mode)
+        if (not self.photo.mode == mode):
+            self.setPhoto( self.photo.convert(mode))
+        print(self.photo.mode)

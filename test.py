@@ -5,5 +5,5 @@ img = Image.open('photo/kyoto.jpg')
 
 latergram = Latergram(img)
 latergram.show()
-latergram.applyColor(4500)
+latergram.saturationUpdate(-50)
 latergram.show()
