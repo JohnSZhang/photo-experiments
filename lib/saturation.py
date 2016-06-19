@@ -31,6 +31,16 @@ class Saturation:
         valueUpdate = lambda x: max(min(x + delta, 255), 0)
         self.__hsvUpdate(0, 0, valueUpdate)
 
+    # cluster the colors of the photo to a given hue by having distance between the points
+    def hueCluster(self, degree):
+        # raise error if degree is not in acceptable range
+        if (degree < 0 or degree > 360):
+            raise Exception('Please select a hue degree between 0 and 360')
+        hueInBits = degree / 360 * 255
+        # get hue update function and apply to photo
+        hueUpdate = lambda x: x + ((x - hueInBits) / 2)
+        self.__hsvUpdate(hueUpdate, 0, 0)
+
     # updates HSV values of the photo with provided update functions
     def __hsvUpdate(self, hUpdate, sUpdate, vUpdate):
         self.ensureMode('HSV')
@@ -44,7 +54,3 @@ class Saturation:
         saturation = bands[S].point(sUpdate or defaultUpdate)
         value = bands[V].point(vUpdate or defaultUpdate)
         self.updatePhotoFromBands('HSV', [hue, saturation, value])
-
-    # turns photo into pastal version
-    def pastalify(self):
-        return 0

@@ -51,7 +51,5 @@ class Latergram(ColorShift, WhiteBalance, Saturation):
     def ensureMode(self, mode):
         if ['HSV'].count(mode) == 0:
             raise Exception('Not a support image mode')
-        print(self.photo.mode)
         if (not self.photo.mode == mode):
             self.setPhoto( self.photo.convert(mode))
-        print(self.photo.mode)
