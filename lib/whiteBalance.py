@@ -34,34 +34,63 @@ class WhiteBalance:
         average = tuple(map(lambda x: x / bandlength, sums))
         return average
 
-    # use brightest point in the photo to white balance the photo by adding a fixed difference
-    def whiteBalanceFixed(self):
+    # find the aboslute difference for rgb bands between brightest point in picture and white
+    def whiteDeltasFixed(self):
         brightest = self.__findBrightest()
         R, G, B = 0, 1, 2
         white = (255, 255, 255)
-        fdeltas = (white[R] - brightest[R], white[G] - brightest[G], white[B] - brightest[B])
+        return (white[R] - brightest[R], white[G] - brightest[G], white[B] - brightest[B])
+
+    # find the mulitplier for rgb bands difference between brightest point in picture and white
+    def whiteMultipliers(self):
+        brightest = self.__findBrightest()
+        R, G, B = 0, 1, 2
+        white = (255.0, 255.0, 255.0)
+        return (white[R] / brightest[R], white[G] / brightest[G], white[B] / brightest[B])
+
+    # find the aboslute difference for rgb bands between average point in picture and grey
+    def neutralDeltas(self):
+        average = self.__findAverage()
+        R, G, B = 0, 1, 2
+        grey = (127, 127, 127)
+        return (grey[R] - average[R], grey[G] - average[G], grey[B] - average[B])
+
+    # find the mulitplier for rgb bands ratio between average point in picture and grey
+    def neutralMultipliers(self):
+        average = self.__findAverage()
+        R, G, B = 0, 1, 2
+        grey = (127.0, 127.0, 127.0)
+        return (grey[R] / average[R], grey[G] / average[G], grey[B] / average[B])
+
+    # use brightest point in the photo to white balance the photo by adding a fixed difference
+    def whiteBalanceFixed(self):
+        fdeltas = self.whiteDeltasFixed()
         self.updateFixedChange(fdeltas)
 
     # use brightest point in the photo to white balance the photo linearly
     def whiteBalanceLinear(self):
-        brightest = self.__findBrightest()
-        R, G, B = 0, 1, 2
-        white = (255.0, 255.0, 255.0)
-        mdeltas = (white[R] / brightest[R], white[G] /  brightest[G], white[B] / brightest[B])
+        mdeltas = self.whiteMultipliers()
         self.updateLinearChange(mdeltas)
 
     # use average point in the photo to netural balance the photo by adding a fixed difference
     def neturalBalanceFixed(self):
-        average = self.__findAverage()
-        R, G, B = 0, 1, 2
-        grey = (127, 127, 127)
-        fdeltas = (grey[R] - average[R], grey[G] - average[G], grey[B] - average[B])
+        fdeltas = self.neutralDeltas()
         self.updateFixedChange(fdeltas)
 
     # use average point in the photo to netural balance the photo by a multiplier
-    def whiteBalanceLinear(self):
-        average = self.__findAverage()
-        R, G, B = 0, 1, 2
-        grey = (127, 127, 127)
-        mdeltas = (grey[R] / average[R], grey[G] /  average[G], grey[B] / average[B])
+    def neturalBalanceLinear(self):
+        mdeltas = self.neutralMultipliers()
+        self.updateLinearChange(mdeltas)
+
+    # a combination of 50% white balance and 50% netura balance
+    def balanceFixed(self):
+        fWhiteDeltas = self.whiteDeltasFixed()
+        fNeutralDeltas= self.neutralDeltas()
+        fdeltas = tuple(map(lambda x, y: (x + y) / 2, fWhiteDeltas, fNeutralDeltas))
+        self.updateFixedChange(fdeltas)
+
+    def balanceLinear(self):
+        mWhiteDeltas = self.whiteMultipliers()
+        mNeutralDeltas = self.neutralMultipliers()
+        mdeltas = tuple(map(lambda x, y: (x + y) / 2, mWhiteDeltas, mNeutralDeltas))
         self.updateLinearChange(mdeltas)
