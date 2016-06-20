@@ -5,5 +5,5 @@ img = Image.open('photo/kyoto.jpg')
 
 latergram = Latergram(img)
 latergram.show()
-latergram.hueCluster(40)
+latergram.contrast(.5)
 latergram.show()

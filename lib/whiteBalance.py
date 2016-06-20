@@ -38,7 +38,7 @@ class WhiteBalance:
     # use brightest point in the photo to white balance the photo linearly
     def whiteBalanceLinear(self):
         mdeltas = self.whiteMultipliers()
-        self.updateLinearChange(mdeltas)
+        self.__updateLinearChange(mdeltas)
 
     # use average point in the photo to netural balance the photo by adding a fixed difference
     def neturalBalanceFixed(self):
@@ -48,7 +48,7 @@ class WhiteBalance:
     # use average point in the photo to netural balance the photo by a multiplier
     def neturalBalanceLinear(self):
         mdeltas = self.neutralMultipliers()
-        self.updateLinearChange(mdeltas)
+        self.__updateLinearChange(mdeltas)
 
     # a combination of 50% white balance and 50% netura balance with fixed difference
     def balanceFixed(self):
@@ -62,7 +62,7 @@ class WhiteBalance:
         mWhiteDeltas = self.whiteMultipliers()
         mNeutralDeltas = self.neutralMultipliers()
         mdeltas = tuple(map(lambda x, y: (x + y) / 2, mWhiteDeltas, mNeutralDeltas))
-        self.updateLinearChange(mdeltas)
+        self.__updateLinearChange(mdeltas)
 
     # returns copy of photo with given color temperature linearlys scaled
     def applyColor(self, temperature):
@@ -75,10 +75,11 @@ class WhiteBalance:
         # get ratio of difference between expect color and brightest point
         ratios = (bBodyColor[R] / brightest[R], bBodyColor[G] / brightest[G], bBodyColor[B] / brightest[B])
 
-        self.updateLinearChange(ratios)
+        self.__updateLinearChange(ratios)
 
     # Find the brightest point in the photo and get it's rgb value
     def __brightestPoint(self):
+        self.ensureMode('RGB')
         imgSource = self.getPhoto().split()
         sourceList = list(map(lambda color: imgSource[color].getdata(), [0, 1, 2]))
 
@@ -96,6 +97,7 @@ class WhiteBalance:
 
     # find the color of the average point in the photo
     def __averagePoint(self):
+        self.ensureMode('RGB')
         imgSource = self.getPhoto().split()
         sourceList = list(map(lambda color: imgSource[color].getdata(), [0, 1, 2]))
 
